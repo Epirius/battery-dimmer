@@ -8,8 +8,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let charge: f32 = battery.state_of_charge().try_into()?;
     let state = battery.state();
 
-    println!("state {:?}", state);
-    println!("charge {:?}", charge);
     if state == State::Charging {
         std::process::exit(0);
     }
