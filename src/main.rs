@@ -18,14 +18,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         _ => std::process::exit(0),
     };
 
-    // TODO find set_brightness in a generic way. maybe via which
-    let command = format!("~/bin/set_brightness {}", percentage);
-    let output = Command::new("sh").args(["-c", &command]).output();
-    match output {
-        Ok(_) => std::process::exit(0),
-        Err(e) => {
-            eprintln!("Error: {}", e);
-            std::process::exit(1);
+    if let Ok(b_path) = which::which("set_brightness") {
+        let brightness_path = b_path.to_str().unwrap();
+
+        let command = format!("{} {}", brightness_path, percentage);
+        let output = Command::new("sh").args(["-c", &command]).output();
+        match output {
+            Ok(_) => std::process::exit(0),
+            Err(e) => {
+                eprintln!("Error: {}", e);
+                std::process::exit(1);
+            }
         }
+    } else {
+        eprintln!("Could not find 'set_brightness' executable in $PATH.");
+        std::process::exit(5);
     }
 }
